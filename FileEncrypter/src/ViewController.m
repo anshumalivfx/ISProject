@@ -48,6 +48,16 @@
     loadingIndicator.indeterminate = YES;
     [loadingIndicator setHidden:YES];
     [self.view addSubview:loadingIndicator];
+
+    // Add a decrypt button
+    NSButton *decryptFileButton = [[NSButton alloc] initWithFrame:NSMakeRect(310, 90, 100, 30)];
+    decryptFileButton.bezelStyle = NSBezelStyleRegularSquare;
+    [decryptFileButton setTitle:@"Decrypt File"];
+    [decryptFileButton setHidden:YES];
+    [decryptFileButton setTarget:self];
+    [decryptFileButton setAction:@selector(decryptFileButtonAction)];
+    [self.view addSubview:decryptFileButton];
+
     
 }
 - (void)selectFileButtonAction:(NSString *)action {
@@ -62,6 +72,7 @@
             [self.view.subviews[1] setStringValue:filePath];
             [self.view.subviews[3] setAction:@selector(encryptFileButtonAction)];
             [self.view.subviews[3] setHidden:NO];
+            [self.view.subviews[5] setHidden:NO];
         }
     }];
 
@@ -78,7 +89,7 @@
         NSData *fileData = [NSData dataWithContentsOfFile:filePath];
         NSData *encryptedData = [self encryptData:fileData];
         // set ecrypted data extension
-        NSString *encryptedFilePath = [filePath stringByAppendingString:@".encrypted"];
+        NSString *encryptedFilePath = [filePath stringByAppendingString:@""];
         [encryptedData writeToFile:encryptedFilePath atomically:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             sleep(2);
@@ -167,6 +178,42 @@
     return decryptedData;
 }
 
+- (void)decryptFileButtonAction {
+    NSString *filePath = [self.view.subviews[1] stringValue];
+    [self.view.subviews[3] setHidden:YES];
+    [self.view.subviews[4] setHidden:NO];
+    [self.view.subviews[4] startAnimation:nil];
+   
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData *fileData = [NSData dataWithContentsOfFile:filePath];
+        NSData *decryptedData = [self decryptData:fileData];
+        // set ecrypted data extension
+        NSString *decryptedFilePath = [filePath stringByAppendingString:@""];
+        [decryptedData writeToFile:decryptedFilePath atomically:YES];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            sleep(2);
+            [self.view.subviews[4] setHidden:YES];
+            [self.view.subviews[4] stopAnimation:nil];
+            [self.view.subviews[3] setHidden:NO];
+            [self.view.subviews[1] setStringValue:@"No file selected"];
+            if (decryptedData) {
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = @"File decrypted successfully";
+                alert.informativeText = [NSString stringWithFormat:@"Decrypted file saved at %@", decryptedFilePath];
+                [alert addButtonWithTitle:@"OK"];
+                [alert runModal];
+            }
+            else {
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = @"File decryption failed";
+                alert.informativeText = @"Please try again";
+                [alert addButtonWithTitle:@"OK"];
+                [alert runModal];
+            }
+        });
+    });
+
+}
 
 
 
