@@ -6,7 +6,7 @@
 //
 
 #include "ViewController.h"
-#include "FileEncrypter-Bridging-Header.h"
+#include <CommonCrypto/CommonCrypto.h>
 
 @implementation ViewController
 
@@ -42,7 +42,9 @@
     [encryptFileButton setHidden:YES];
     [encryptFileButton setTarget:self];
     [self.view addSubview:encryptFileButton];
-    NSProgressIndicator *loadingIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 300, 20)];
+    NSProgressIndicator *loadingIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 100, 300, 20)];
+    // loadingIndicator style
+    loadingIndicator.style = NSProgressIndicatorStyleBar;
     loadingIndicator.indeterminate = YES;
     [loadingIndicator setHidden:YES];
     [self.view addSubview:loadingIndicator];
@@ -66,11 +68,105 @@
 }
 
 
-
-// Encrypt file using AES
 - (void)encryptFileButtonAction {
-    
+    NSString *filePath = [self.view.subviews[1] stringValue];
+    [self.view.subviews[3] setHidden:YES];
+    [self.view.subviews[4] setHidden:NO];
+    [self.view.subviews[4] startAnimation:nil];
+   
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData *fileData = [NSData dataWithContentsOfFile:filePath];
+        NSData *encryptedData = [self encryptData:fileData];
+        // set ecrypted data extension
+        NSString *encryptedFilePath = [filePath stringByAppendingString:@".encrypted"];
+        [encryptedData writeToFile:encryptedFilePath atomically:YES];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            sleep(2);
+            [self.view.subviews[4] setHidden:YES];
+            [self.view.subviews[4] stopAnimation:nil];
+            [self.view.subviews[3] setHidden:NO];
+            [self.view.subviews[1] setStringValue:@"No file selected"];
+            if (encryptedData) {
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = @"File encrypted successfully";
+                alert.informativeText = [NSString stringWithFormat:@"Encrypted file saved at %@", encryptedFilePath];
+                [alert addButtonWithTitle:@"OK"];
+                [alert runModal];
+            }
+            else {
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = @"File encryption failed";
+                alert.informativeText = @"Please try again";
+                [alert addButtonWithTitle:@"OK"];
+                [alert runModal];
+            }
+        });
+    });
+
+}   
+
+-(NSString *) hexStringFromData:(NSData *)data {
+    const unsigned char *dataBuffer = (const unsigned char *)[data bytes];
+    if (!dataBuffer)
+        return [NSString string];
+    NSUInteger dataLength  = [data length];
+    NSMutableString *hexString  = [NSMutableString stringWithCapacity:(dataLength * 2)];
+    for (int i = 0; i < dataLength; ++i)
+        [hexString appendString:[NSString stringWithFormat:@"%02lx", (unsigned long)dataBuffer[i]]];
+    return [NSString stringWithString:hexString];
 }
+
+
+-(NSData *)encryptData:(NSData *)data {
+    NSData *key = [@"1234567890123456" dataUsingEncoding:NSUTF8StringEncoding];
+    // use hashing algorithm to generate 256 bit key
+    NSData *hashedKey = [self sha256:key];
+    NSData *iv = [@"1234567890123456" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *encryptedData = [self aes256Encrypt:data key:hashedKey iv:iv];
+    return encryptedData;
+}
+
+-(NSData *)sha256:(NSData *)data {
+    uint8_t digest[CC_SHA256_DIGEST_LENGTH];
+    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+    return [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+}
+
+-(NSData *)aes256Encrypt:(NSData *)data key:(NSData *)key iv:(NSData *)iv {
+    size_t bufferSize = data.length + kCCBlockSizeAES128;
+    void *buffer = malloc(bufferSize);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, key.bytes, kCCKeySizeAES256, iv.bytes, data.bytes, data.length, buffer, bufferSize, &numBytesEncrypted);
+    if (cryptStatus == kCCSuccess) {
+        return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
+    }
+    free(buffer);
+    return nil;
+}
+
+
+-(NSData *)aes256Decrypt:(NSData *)data key:(NSData *)key iv:(NSData *)iv {
+    size_t bufferSize = data.length + kCCBlockSizeAES128;
+    void *buffer = malloc(bufferSize);
+    size_t numBytesDecrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, key.bytes, kCCKeySizeAES256, iv.bytes, data.bytes, data.length, buffer, bufferSize, &numBytesDecrypted);
+    if (cryptStatus == kCCSuccess) {
+        return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+    }
+    free(buffer);
+    return nil;
+}
+
+
+-(NSData *)decryptData:(NSData *)data {
+    NSData *key = [@"1234567890123456" dataUsingEncoding:NSUTF8StringEncoding];
+    // use hashing algorithm to generate 256 bit key
+    NSData *hashedKey = [self sha256:key];
+    NSData *iv = [@"1234567890123456" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *decryptedData = [self aes256Decrypt:data key:hashedKey iv:iv];
+    return decryptedData;
+}
+
 
 
 

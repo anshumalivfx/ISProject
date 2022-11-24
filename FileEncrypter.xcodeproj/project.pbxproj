@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A00A68929301981000DDFF8 /* IS LAB.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7A00A68829301981000DDFF8 /* IS LAB.pdf */; };
 		7A3D2686292FF0B7008C2879 /* Encrypter.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A3D2685292FF0B7008C2879 /* Encrypter.c */; };
-		7A3D2689292FF5C2008C2879 /* Crypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3D2688292FF5C2008C2879 /* Crypt.swift */; };
 		7AEA2C8C292FC8B500ECA167 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AEA2C8B292FC8B500ECA167 /* AppDelegate.m */; };
 		7AEA2C8F292FC8B500ECA167 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AEA2C8E292FC8B500ECA167 /* ViewController.m */; };
 		7AEA2C91292FC8B700ECA167 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7AEA2C90292FC8B700ECA167 /* Assets.xcassets */; };
@@ -17,10 +17,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7A00A68829301981000DDFF8 /* IS LAB.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "IS LAB.pdf"; sourceTree = "<group>"; };
 		7A3D2684292FF0B7008C2879 /* Encrypter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Encrypter.h; sourceTree = "<group>"; };
 		7A3D2685292FF0B7008C2879 /* Encrypter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Encrypter.c; sourceTree = "<group>"; };
-		7A3D2687292FF5C2008C2879 /* FileEncrypter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileEncrypter-Bridging-Header.h"; sourceTree = "<group>"; };
-		7A3D2688292FF5C2008C2879 /* Crypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypt.swift; sourceTree = "<group>"; };
 		7AEA2C87292FC8B500ECA167 /* FileEncrypter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FileEncrypter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AEA2C8A292FC8B500ECA167 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AEA2C8B292FC8B500ECA167 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -67,8 +66,6 @@
 				7AEA2C8B292FC8B500ECA167 /* AppDelegate.m */,
 				7AEA2C95292FC8B700ECA167 /* main.m */,
 				7A3D2685292FF0B7008C2879 /* Encrypter.c */,
-				7A3D2687292FF5C2008C2879 /* FileEncrypter-Bridging-Header.h */,
-				7A3D2688292FF5C2008C2879 /* Crypt.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -96,6 +93,7 @@
 				7A3D2683292FF03F008C2879 /* src */,
 				7A3D2682292FEFF0008C2879 /* include */,
 				7AEA2C90292FC8B700ECA167 /* Assets.xcassets */,
+				7A00A68829301981000DDFF8 /* IS LAB.pdf */,
 				7AEA2C92292FC8B700ECA167 /* Main.storyboard */,
 				7AEA2C97292FC8B700ECA167 /* FileEncrypter.entitlements */,
 			);
@@ -162,6 +160,7 @@
 			files = (
 				7AEA2C91292FC8B700ECA167 /* Assets.xcassets in Resources */,
 				7AEA2C94292FC8B700ECA167 /* Main.storyboard in Resources */,
+				7A00A68929301981000DDFF8 /* IS LAB.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,7 +172,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A3D2686292FF0B7008C2879 /* Encrypter.c in Sources */,
-				7A3D2689292FF5C2008C2879 /* Crypt.swift in Sources */,
 				7AEA2C8F292FC8B500ECA167 /* ViewController.m in Sources */,
 				7AEA2C96292FC8B700ECA167 /* main.m in Sources */,
 				7AEA2C8C292FC8B500ECA167 /* AppDelegate.m in Sources */,
@@ -331,7 +329,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.anshumali.FileEncrypter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "FileEncrypter/src/FileEncrypter-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "FileEncrypter/include/FileEncrypter-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -363,7 +361,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.anshumali.FileEncrypter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "FileEncrypter/src/FileEncrypter-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "FileEncrypter/include/FileEncrypter-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

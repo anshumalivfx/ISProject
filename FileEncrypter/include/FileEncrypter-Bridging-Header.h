@@ -6,9 +6,9 @@
 
 @class FileEncrypter;
 
-@interface FileEncrypter 
+@interface Crypt : NSObject
 
--(NSData *)encrypt:(NSData *)data withKey:(NSString *)key;
--(NSData *)decrypt:(NSData *)data withKey:(NSString *)key;
+-(NSString *) encryptFile: (NSString *) path withKey:(NSString *) key;
+-(NSString *) decryptFile: (NSString *) path withKey:(NSString *) key;
 
 @end

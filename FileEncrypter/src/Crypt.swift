@@ -6,16 +6,29 @@
 //
 
 import Foundation
-
-@objc public class FileEncrypter : NSObject {
-    @objc func encrypt(data: Data, key: String) -> Data? {
-        return data
+import CryptoKit
+@objc public class Crypt : NSObject {
+@objc public static func encryptFile(atPath path: String, withKey key: String) -> String? {
+        let fileURL = URL(fileURLWithPath: path)
+        let fileData = try! Data(contentsOf: fileURL)
+        let keyData = key.data(using: .utf8)!
+        let symmetricKey = SymmetricKey(data: keyData)
+        let sealedBox = try! ChaChaPoly.seal(fileData, using: symmetricKey)
+        let encryptedData = sealedBox.combined
+        let encryptedFileURL = fileURL.deletingPathExtension().appendingPathExtension("encrypted")
+        try! encryptedData.write(to: encryptedFileURL)
+        return encryptedFileURL.path
     }
-    
-    @objc func decrypt(data: Data, key: String) -> Data? {
-        return data
+    @objc public static func decryptFile(atPath path: String, withKey key: String) -> String? {
+        let fileURL = URL(fileURLWithPath: path)
+        let fileData = try! Data(contentsOf: fileURL)
+        let keyData = key.data(using: .utf8)!
+        let symmetricKey = SymmetricKey(data: keyData)
+        let sealedBox = try! ChaChaPoly.SealedBox(combined: fileData)
+        let decryptedData = try! ChaChaPoly.open(sealedBox, using: symmetricKey)
+        let decryptedFileURL = fileURL.deletingPathExtension().appendingPathExtension("decrypted")
+        try! decryptedData.write(to: decryptedFileURL)
+        return decryptedFileURL.path
     }
-
-    
 }
 
